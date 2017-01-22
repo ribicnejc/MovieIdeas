@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Movie ideas</string>
     <string name="action_settings">Settings</string>
-    <string name="api_key">c12d066110f453cd8a6aa913275067d3</string>
+    <string name="api_key">INSERT YOUR API HERE</string>
     <string name="menu_most_popular">Sort by Most popular</string>
     <string name="menu_highest_rated">Sort by Highest rated</string>
     <string name="error_no_internet">Oops!\nLooks like your internet is not working</string>
