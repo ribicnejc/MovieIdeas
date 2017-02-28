@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <!--TODO add star as favorite mark-->
+    <!--TODO add two recyclerviews on for reviews and other for videos-->
+    <!--TODO make responsive layout for landscape and for devices sw600dp etc. tablets-->
+    <!--TODO save dimensions to dimens file-->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,6 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
+            tools:src="@drawable/test1"
             android:scaleType="centerCrop" />
 
         <TextView
@@ -35,6 +41,16 @@
             android:padding="6dp"
             android:textColor="@color/colorWhiteTextView"
             android:textSize="25sp" />
+
+        <ImageView
+            android:id="@+id/iv_favorite_star"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/favorite_unmarked"
+            android:onClick="favoriteMovie"/>
     </RelativeLayout>
 
     <TextView
@@ -73,7 +89,6 @@
 
 
     </RelativeLayout>
-
 
 </LinearLayout>
 </ScrollView>
