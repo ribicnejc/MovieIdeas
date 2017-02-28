@@ -31,6 +31,7 @@
             android:scaleType="centerCrop" />
 
         <TextView
+            tools:text="Secret life of pets"
             android:id="@+id/tv_movie_title_more_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

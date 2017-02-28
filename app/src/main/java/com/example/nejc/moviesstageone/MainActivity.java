@@ -1,7 +1,9 @@
 package com.example.nejc.moviesstageone;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
+    public static final String LIFECYCLE_CALLBACKS_LAYOUT_KEY = "layout_callback";
     public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
 
     public static final String SETTINGS_FAVORITE = "settings_favorite";
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     public static String sSettingsOption = SETTINGS_POPULAR;
     public static boolean sUnmarkedAsFavorite = false;
+    public static boolean sBeenOnFavorite = false;
 
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_OVERVIEW = "extra_overview";
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public static final String EXTRA_AVG_VOTE = "average_vote";
     public static final String EXTRA_MOVIE_ID = "movie_id";
     public static final String EXTRA_MAIN_POSTER_PATH = "main_poster_path";
+
+    public GridLayoutManager layoutManager;
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -61,15 +67,20 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mErrorMsg = (TextView) findViewById(R.id.tv_error);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(layoutManager);
-
-
         if (savedInstanceState != null){
             if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TEXT_KEY)){
                 sSettingsOption = savedInstanceState.getString(LIFECYCLE_CALLBACKS_TEXT_KEY);
             }
         }
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            layoutManager = new GridLayoutManager(this, 4);
+        }else
+            layoutManager = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+
+
         assert sSettingsOption != null;
         switch (sSettingsOption){
             case SETTINGS_POPULAR:
@@ -80,9 +91,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 break;
             case SETTINGS_FAVORITE:
                 new FetchFavoriteMovies().execute();
+                break;
         }
 
         mRecyclerView.setHasFixedSize(true);
+
 
 
     }
@@ -91,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     protected void onResume() {
         super.onResume();
-        if (sUnmarkedAsFavorite) new FetchFavoriteMovies().execute();
+        if (sUnmarkedAsFavorite && sBeenOnFavorite) new FetchFavoriteMovies().execute();
 
     }
 
@@ -257,18 +270,21 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             mAdapter = null;
             new FetchMovies("popular").execute();
             sSettingsOption = SETTINGS_POPULAR;
+            sBeenOnFavorite = false;
             return true;
         }
         if (id == R.id.action_highest_rated) {
             mAdapter = null;
             new FetchMovies("top_rated").execute();
             sSettingsOption = SETTINGS_TOP_RATED;
+            sBeenOnFavorite = false;
             return true;
         }
         if (id == R.id.action_favorites) {
             mAdapter = null;
             new FetchFavoriteMovies().execute();
             sSettingsOption = SETTINGS_FAVORITE;
+            sBeenOnFavorite = true;
             return true;
         }
 
@@ -293,10 +309,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(LIFECYCLE_CALLBACKS_TEXT_KEY, sSettingsOption);
+        outState.putParcelable(LIFECYCLE_CALLBACKS_LAYOUT_KEY, mRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
 
