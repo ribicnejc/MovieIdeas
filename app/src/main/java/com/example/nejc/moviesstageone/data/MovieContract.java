@@ -25,13 +25,8 @@ public class MovieContract {
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_ORIGINAL_TITLE = "original_title";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
-
-        public static Uri buildMovieUriWithDate(long date){
-            return CONTENT_URI.buildUpon()
-                    .appendPath(Long.toString(date))
-                    .build();
-        }
-
+        public static final String COLUMN_MOVIE_OVERVIEW = "movie_overview";
+        public static final String COLUMN_MOVIE_BACKGROUND_PATH = "movie_background_path";
 
     }
 }

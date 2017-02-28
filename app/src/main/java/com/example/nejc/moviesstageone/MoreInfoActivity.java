@@ -37,6 +37,7 @@ public class MoreInfoActivity extends AppCompatActivity {
     public String movieOverview;
     public String movieBackgroundPath;
     public String movieReleaseDate;
+
     public static boolean mMarked = false;
 
     @Override
@@ -69,6 +70,8 @@ public class MoreInfoActivity extends AppCompatActivity {
         contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, moviePosterPath);
         contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
         contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieAvgRate);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movieOverview);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_BACKGROUND_PATH, movieBackgroundPath);
 
         List<ContentValues> values = new ArrayList<>();
         values.add(contentValues);
@@ -76,6 +79,8 @@ public class MoreInfoActivity extends AppCompatActivity {
                 values.toArray(new ContentValues[1]));
         Toast.makeText(this, "Marked as favorite", Toast.LENGTH_SHORT).show();
         setStarImage(true);
+
+        MainActivity.sUnmarkedAsFavorite = false;
     }
 
     public void unMarkAsFavorite(){
@@ -86,6 +91,8 @@ public class MoreInfoActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Unmarked as favorite", Toast.LENGTH_SHORT).show();
         setStarImage(false);
+
+        MainActivity.sUnmarkedAsFavorite = true;
     }
 
 

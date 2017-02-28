@@ -1,6 +1,7 @@
 package com.example.nejc.moviesstageone;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nejc.moviesstageone.adapters.MoviesAdapter;
+import com.example.nejc.moviesstageone.data.MovieContract;
 import com.example.nejc.moviesstageone.networkutils.NetworkUtils;
 import com.example.nejc.moviesstageone.objects.Movie;
 
@@ -26,6 +28,15 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
+    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
+
+    public static final String SETTINGS_FAVORITE = "settings_favorite";
+    public static final String SETTINGS_POPULAR = "settings_popular";
+    public static final String SETTINGS_TOP_RATED = "settings_top_rated";
+
+    public static String sSettingsOption = SETTINGS_POPULAR;
+    public static boolean sUnmarkedAsFavorite = false;
+
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_OVERVIEW = "extra_overview";
     public static final String EXTRA_POSTER_PATH = "poster_path";
@@ -33,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public static final String EXTRA_AVG_VOTE = "average_vote";
     public static final String EXTRA_MOVIE_ID = "movie_id";
     public static final String EXTRA_MAIN_POSTER_PATH = "main_poster_path";
+
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     RecyclerView mRecyclerView;
     MoviesAdapter mAdapter;
@@ -43,14 +56,42 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_rv);
         mErrorMsg = (TextView) findViewById(R.id.tv_error);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
-        new FetchMovies("popular").execute();
+
+
+        if (savedInstanceState != null){
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TEXT_KEY)){
+                sSettingsOption = savedInstanceState.getString(LIFECYCLE_CALLBACKS_TEXT_KEY);
+            }
+        }
+        assert sSettingsOption != null;
+        switch (sSettingsOption){
+            case SETTINGS_POPULAR:
+                new FetchMovies("popular").execute();
+                break;
+            case SETTINGS_TOP_RATED:
+                new FetchMovies("top_rated").execute();
+                break;
+            case SETTINGS_FAVORITE:
+                new FetchFavoriteMovies().execute();
+        }
+
         mRecyclerView.setHasFixedSize(true);
 
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sUnmarkedAsFavorite) new FetchFavoriteMovies().execute();
 
     }
 
@@ -135,6 +176,74 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }
     }
 
+
+    class FetchFavoriteMovies extends AsyncTask<Cursor, Cursor, Cursor>{
+        @Override
+        protected void onPreExecute() {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            mErrorMsg.setVisibility(View.INVISIBLE);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Cursor doInBackground(Cursor... cursors) {
+            try{
+                return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                        null,
+                        null,
+                        null,
+                        MovieContract.MovieEntry._ID);
+            }catch (Exception e){
+                Log.v(TAG, "Failed to query data");
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            if (cursor == null) {
+                mErrorMsg.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.INVISIBLE);
+                return;
+            }
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mErrorMsg.setVisibility(View.INVISIBLE);
+
+            ArrayList<Movie> movies = new ArrayList<>();
+            if (cursor.moveToFirst()){
+                do {
+                    Movie movie = new Movie();
+                    int id = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
+                    String title = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE));
+                    String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH));
+                    String releaseDate = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE));
+                    float avgRate = cursor.getFloat(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE));
+                    String overView = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW));
+                    String backgroundPath = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_BACKGROUND_PATH));
+
+                    movie.setId(id);
+                    movie.setTitle(title);
+                    movie.setPosterPath(posterPath);
+                    movie.setReleaseDate(releaseDate);
+                    movie.setVoteAverage(avgRate);
+                    movie.setOverview(overView);
+                    movie.setBackdropPath(backgroundPath);
+
+                    movies.add(movie);
+                }while (cursor.moveToNext());
+            }
+            mAdapter = new MoviesAdapter(movies, MainActivity.this);
+            mRecyclerView.setAdapter(mAdapter);
+            Toast.makeText(MainActivity.this, "Sorted by favorite", Toast.LENGTH_SHORT).show();
+            super.onPostExecute(cursor);
+        }
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -147,20 +256,20 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         if (id == R.id.action_most_popular) {
             mAdapter = null;
             new FetchMovies("popular").execute();
+            sSettingsOption = SETTINGS_POPULAR;
             return true;
         }
         if (id == R.id.action_highest_rated) {
             mAdapter = null;
             new FetchMovies("top_rated").execute();
+            sSettingsOption = SETTINGS_TOP_RATED;
             return true;
         }
         if (id == R.id.action_favorites) {
-            //TODO show favorite movies
-            /**
-             * first set adapter to null then start loading and start cursor loader,
-             * inside fetch movies from db with content provider, fill adapter with data,
-             * and show data on post execute
-             */
+            mAdapter = null;
+            new FetchFavoriteMovies().execute();
+            sSettingsOption = SETTINGS_FAVORITE;
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -183,5 +292,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             Log.d(getPackageName(), "Couldn't start activity MoreInfo");
         }
     }
-    //TODO on save instance when display rotate you have to stay on same point when scrolling
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(LIFECYCLE_CALLBACKS_TEXT_KEY, sSettingsOption);
+    }
+
+
 }
