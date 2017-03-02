@@ -10,4 +10,10 @@
     <string name="overview">Overview</string>
     <string name="content_authority">com.example.nejc.moviesstageone</string>
     <string name="action_favorites">My favorites</string>
+    <string name="reviews">Reviews</string>
+    <string name="alert_dialog_button_positive">More</string>
+    <string name="alert_dialog_button_negative">Cancel</string>
+    <string name="trailers">Trailers</string>
+    <string name="no_trailers">No trailers</string>
+    <string name="no_reviews">No reviews</string>
 </resources>

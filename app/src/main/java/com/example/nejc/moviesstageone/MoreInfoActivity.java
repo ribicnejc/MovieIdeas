@@ -1,35 +1,56 @@
 package com.example.nejc.moviesstageone;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nejc.moviesstageone.adapters.ReviewsAdapter;
 import com.example.nejc.moviesstageone.data.MovieContract;
+import com.example.nejc.moviesstageone.networkutils.NetworkUtils;
+import com.example.nejc.moviesstageone.objects.Review;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoreInfoActivity extends AppCompatActivity {
+import static android.view.View.GONE;
+
+public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapter.ReviewsAdapterOnClickHandler{
     //TODO add content description to images
     public TextView mTitleTextView;
     public TextView mAvgVoteTextView;
     public TextView mReleaseDateTextView;
     public TextView mOverviewTextView;
+    public TextView mTrailerTextView;
+    public TextView mReviewTextView;
     public ImageView mPosterImageView;
     public ImageView mFavoriteImageView;
+    public RecyclerView mTrailerRecyclerView;
+    public RecyclerView mReviewRecyclerView;
+    public ProgressBar mProgressBarReviews;
+    public ProgressBar mProgressBarTrailers;
 
     public static final String TAG = MoreInfoActivity.class.getSimpleName();
 
+    public ReviewsAdapter mReviewsAdapter;
     public String moviePosterPath;
     public int movieId;
     public String movieTitle;
@@ -37,6 +58,8 @@ public class MoreInfoActivity extends AppCompatActivity {
     public String movieOverview;
     public String movieBackgroundPath;
     public String movieReleaseDate;
+    public ArrayList<Review> mReviews;
+    public GridLayoutManager layoutManager;
 
     public static boolean mMarked = false;
 
@@ -51,11 +74,24 @@ public class MoreInfoActivity extends AppCompatActivity {
         mOverviewTextView = (TextView) findViewById(R.id.tv_overview_more_info);
         mPosterImageView = (ImageView) findViewById(R.id.iv_movie_background_more_info);
         mFavoriteImageView = (ImageView) findViewById(R.id.iv_favorite_star);
-
+        mProgressBarReviews = (ProgressBar) findViewById(R.id.pb_reviews);
+        mProgressBarTrailers = (ProgressBar) findViewById(R.id.pb_trailers);
+        mReviewRecyclerView = (RecyclerView) findViewById(R.id.rv_reviews);
+        mReviewTextView = (TextView) findViewById(R.id.tv_reviews);
+        mTrailerTextView = (TextView) findViewById(R.id.tv_trailers);
 
         Intent intent = getIntent();
         setExtras(intent);
         setStarResources(movieId);
+
+
+        layoutManager = new GridLayoutManager(this, 2);
+
+        mReviewRecyclerView.setLayoutManager(layoutManager);
+        mReviewRecyclerView.setHasFixedSize(true);
+
+        new FetchReviews().execute();
+
     }
 
     public void favoriteMovie(View view){
@@ -183,4 +219,89 @@ public class MoreInfoActivity extends AppCompatActivity {
         }
     }
 
+
+    class FetchReviews extends AsyncTask<String, Void, ArrayList<Review>>{
+
+        @Override
+        protected void onPreExecute() {
+            mProgressBarReviews.setVisibility(View.VISIBLE);
+            mReviewRecyclerView.setVisibility(View.GONE);
+            mReviewTextView.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<Review> doInBackground(String... strings) {
+            String jsonResponse;
+            ArrayList<Review> reviewArrayList = new ArrayList<>();
+            URL mUrl = NetworkUtils.buildUrlByType(movieId+"", "reviews", getBaseContext().getResources().getString(R.string.api_key));
+            try{
+                jsonResponse = NetworkUtils.getResponseFromHttpUrl(mUrl);
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                JSONArray jsonArray = jsonObject.getJSONArray("results");
+                for (int i = 0; i < jsonArray.length(); i++){
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                    Review review = new Review();
+
+                    String id = jsonObject1.getString("id");
+                    String author = jsonObject1.getString("author");
+                    String content = jsonObject1.getString("content");
+                    String url = jsonObject1.getString("url");
+
+                    review.setId(id);
+                    review.setAuthor(author);
+                    review.setContent(content);
+                    review.setUrl(url);
+
+                    reviewArrayList.add(review);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+
+            return reviewArrayList;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Review> reviews) {
+            mProgressBarReviews.setVisibility(GONE);
+
+            if (reviews == null ){
+                mReviewTextView.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (reviews.size() == 0) mReviewTextView.setVisibility(View.VISIBLE);
+            mReviewRecyclerView.setVisibility(View.VISIBLE);
+            mReviews = reviews;
+            mReviewsAdapter = new ReviewsAdapter(reviews, MoreInfoActivity.this);
+            mReviewRecyclerView.setAdapter(mReviewsAdapter);
+            super.onPostExecute(reviews);
+        }
+    }
+
+    @Override
+    public void reviewsOnClick(final int clickedItemIndex) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(mReviews.get(clickedItemIndex).getContent())
+                .setTitle(mReviews.get(clickedItemIndex).getAuthor())
+                .setPositiveButton(R.string.alert_dialog_button_positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        openWebPage(mReviews.get(clickedItemIndex).getUrl());
+                    }
+                })
+                .setNegativeButton(R.string.alert_dialog_button_negative, null);
+        builder.create().show();
+
+    }
+
+    public void openWebPage(String url){
+        Uri webPage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
+        if (intent.resolveActivity(getPackageManager()) != null){
+            startActivity(intent);
+        }
+    }
 }

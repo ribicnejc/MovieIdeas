@@ -35,6 +35,21 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildUrlByType(String id, String type, String api){
+        Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+                .appendPath(id)
+                .appendPath(type)
+                .appendQueryParameter("api_key", api)
+                .build();
+        URL url = null;
+        try{
+            url = new URL(builtUri.toString());
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        }
+        Log.v("Connecting", "Built URI " + url);
+        return url;
+    }
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
 

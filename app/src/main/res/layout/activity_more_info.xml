@@ -1,95 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
-    <!--TODO add star as favorite mark-->
     <!--TODO add two recyclerviews on for reviews and other for videos-->
     <!--TODO make responsive layout for landscape and for devices sw600dp etc. tablets-->
     <!--TODO save dimensions to dimens file-->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal"
-    android:orientation="vertical"
-    android:weightSum="15">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:weightSum="15">
 
 
-    <RelativeLayout
-        android:id="@+id/tmp"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="15">
+        <RelativeLayout
+            android:id="@+id/tmp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="15">
 
-        <ImageView
-            android:id="@+id/iv_movie_background_more_info"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            tools:src="@drawable/test1"
-            android:scaleType="centerCrop" />
+            <ImageView
+                android:id="@+id/iv_movie_background_more_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/test1" />
 
-        <TextView
-            tools:text="Secret life of pets"
-            android:id="@+id/tv_movie_title_more_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_movie_background_more_info"
-            android:background="@color/colorTransparentBackground"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="6dp"
-            android:textColor="@color/colorWhiteTextView"
-            android:textSize="25sp" />
+            <TextView
+                android:id="@+id/tv_movie_title_more_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/iv_movie_background_more_info"
+                android:background="@color/colorTransparentBackground"
+                android:fontFamily="monospace"
+                android:gravity="center_vertical"
+                android:padding="6dp"
+                android:textColor="@color/colorWhiteTextView"
+                android:textSize="20sp"
+                tools:text="Secret life of pets" />
 
-        <ImageView
-            android:id="@+id/iv_favorite_star"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/favorite_unmarked"
-            android:onClick="favoriteMovie"/>
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/tv_overview_more_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="4"
-        android:padding="10dp"
-        android:textColor="@color/colorBlackTextView"
-        android:textSize="18sp" />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="10dp">
+            <ImageView
+                android:id="@+id/iv_favorite_star"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:onClick="favoriteMovie"
+                android:src="@drawable/favorite_unmarked" />
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/tv_avg_vote_more_info"
+            android:id="@+id/tv_overview_more_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_weight="4"
+            android:padding="10dp"
             android:textColor="@color/colorBlackTextView"
-            android:textSize="18sp" />
+            android:textSize="15sp"
+            tools:text="Overview\n\nNeki neki neki neki nkei neki neki neki neki ddf sds dss" />
 
-        <TextView
-            android:layout_below="@id/tv_avg_vote_more_info"
-            android:id="@+id/tv_date_more_info"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/colorBlackTextView"
-            android:textSize="18sp" />
+            android:layout_weight="1"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/tv_avg_vote_more_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textColor="@color/colorBlackTextView"
+                android:textSize="15sp"
+                tools:text="Average rating: 6.5" />
+
+            <TextView
+                android:id="@+id/tv_date_more_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/tv_avg_vote_more_info"
+                android:textColor="@color/colorBlackTextView"
+                android:textSize="15sp"
+                tools:text="Release date: 2015-06-09" />
 
 
-    </RelativeLayout>
+        </RelativeLayout>
 
-</LinearLayout>
-</ScrollView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/trailers"
+            android:textColor="@color/colorBlackTextView" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_trailers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/tv_trailers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:text="@string/no_trailers"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/pb_trailers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <!--TODO add styles for texts-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/reviews"
+            android:textColor="@color/colorBlackTextView" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/tv_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:text="@string/no_reviews"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/pb_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
