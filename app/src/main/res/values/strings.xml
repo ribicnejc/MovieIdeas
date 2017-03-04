@@ -30,4 +30,5 @@
 
     <string name="dummy_text_review">James Bond</string>
     <string name="dummy_text_youtube">YouTube official video (Trailer) 2016</string>
+    <string name="movie_thumbnail">Movie thumbnail</string>
 </resources>

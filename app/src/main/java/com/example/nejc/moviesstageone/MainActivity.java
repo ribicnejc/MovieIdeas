@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     public static final String LIFECYCLE_CALLBACKS_LAYOUT_KEY = "layout_callback";
     public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
+    public static final String LIFECYCLE_CALLBACKS_POSITION_KEY = "callback45";
 
     public static final String SETTINGS_FAVORITE = "settings_favorite";
     public static final String SETTINGS_POPULAR = "settings_popular";
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public static String sSettingsOption = SETTINGS_POPULAR;
     public static boolean sUnmarkedAsFavorite = false;
     public static boolean sBeenOnFavorite = false;
+    public static int mScrollPosition = 0;
 
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_OVERVIEW = "extra_overview";
@@ -70,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TEXT_KEY)){
                 sSettingsOption = savedInstanceState.getString(LIFECYCLE_CALLBACKS_TEXT_KEY);
             }
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_POSITION_KEY)){
+                mScrollPosition = savedInstanceState.getInt(LIFECYCLE_CALLBACKS_POSITION_KEY);
+            }
         }
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
@@ -77,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }else
             layoutManager = new GridLayoutManager(this, 2);
 
+        layoutManager.scrollToPosition(mScrollPosition);
         mRecyclerView.setLayoutManager(layoutManager);
 
 
@@ -92,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 new FetchFavoriteMovies().execute();
                 break;
         }
+        mRecyclerView.scrollToPosition(mScrollPosition);
+
 
         mRecyclerView.setHasFixedSize(true);
 
@@ -314,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         super.onSaveInstanceState(outState);
         outState.putString(LIFECYCLE_CALLBACKS_TEXT_KEY, sSettingsOption);
         outState.putParcelable(LIFECYCLE_CALLBACKS_LAYOUT_KEY, mRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putInt(LIFECYCLE_CALLBACKS_POSITION_KEY, layoutManager.findFirstCompletelyVisibleItemPosition());
     }
 
 

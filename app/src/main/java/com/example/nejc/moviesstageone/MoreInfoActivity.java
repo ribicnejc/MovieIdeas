@@ -41,7 +41,10 @@ public class MoreInfoActivity extends AppCompatActivity implements
         TrailersAdapter.TrailersAdapterOnClickHandler{
 
 
-    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
+    public static final String LIFECYCLE_CALLBACKS_BOOLEAN_KEY = "callback12";
+    public static final String LIFECYCLE_CALLBACKS_AUTHOR_KEY = "callback23";
+    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback43";
+    public static final String LIFECYCLE_CALLBACKS_URL_KEY = "callback45";
 
     public TextView mTitleTextView;
     public TextView mAvgVoteTextView;
@@ -74,6 +77,9 @@ public class MoreInfoActivity extends AppCompatActivity implements
 
     public static boolean mMarked = false;
     public static boolean mDialog = false;
+    public static String mDialogAuthor = "";
+    public static String mDialogText="";
+    public static String mDialogUrl = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +119,48 @@ public class MoreInfoActivity extends AppCompatActivity implements
 
         new FetchReviews().execute();
         new FetchTrailer().execute();
+
+
+
+
+        if (savedInstanceState != null){
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_BOOLEAN_KEY)){
+                mDialog = savedInstanceState.getBoolean(LIFECYCLE_CALLBACKS_BOOLEAN_KEY);
+            }
+            if (mDialog){
+                if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_AUTHOR_KEY)){
+                    mDialogAuthor = savedInstanceState.getString(LIFECYCLE_CALLBACKS_AUTHOR_KEY);
+                }
+                if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TEXT_KEY)){
+                    mDialogText = savedInstanceState.getString(LIFECYCLE_CALLBACKS_TEXT_KEY);
+                }
+                if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_URL_KEY)){
+                    mDialogUrl = savedInstanceState.getString(LIFECYCLE_CALLBACKS_URL_KEY);
+                }
+
+                mDialog = true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(mDialogText)
+                        .setTitle(mDialogAuthor)
+                        .setPositiveButton(R.string.alert_dialog_button_positive, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                openWebPage(mDialogUrl);
+                            }
+                        })
+                        .setNegativeButton(R.string.alert_dialog_button_negative, null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                mDialog = false;
+                            }
+                        });
+                builder.create().show();
+
+
+            }
+        }
+
 
     }
 
@@ -381,6 +429,7 @@ public class MoreInfoActivity extends AppCompatActivity implements
 
     @Override
     public void reviewsOnClick(final int clickedItemIndex) {
+        mDialog = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(mReviews.get(clickedItemIndex).getContent())
                 .setTitle(mReviews.get(clickedItemIndex).getAuthor())
@@ -390,7 +439,16 @@ public class MoreInfoActivity extends AppCompatActivity implements
                         openWebPage(mReviews.get(clickedItemIndex).getUrl());
                     }
                 })
-                .setNegativeButton(R.string.alert_dialog_button_negative, null);
+                .setNegativeButton(R.string.alert_dialog_button_negative, null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        mDialog = false;
+                    }
+                });
+        mDialogAuthor = mReviews.get(clickedItemIndex).getAuthor();
+        mDialogText = mReviews.get(clickedItemIndex).getContent();
+        mDialogUrl = mReviews.get(clickedItemIndex).getUrl();
         builder.create().show();
 
     }
@@ -405,7 +463,10 @@ public class MoreInfoActivity extends AppCompatActivity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(LIFECYCLE_CALLBACKS_TEXT_KEY, mDialog);
+        outState.putBoolean(LIFECYCLE_CALLBACKS_BOOLEAN_KEY, mDialog);
+        outState.putString(LIFECYCLE_CALLBACKS_AUTHOR_KEY, mDialogAuthor);
+        outState.putString(LIFECYCLE_CALLBACKS_TEXT_KEY, mDialogText);
+        outState.putString(LIFECYCLE_CALLBACKS_URL_KEY, mDialogUrl);
         super.onSaveInstanceState(outState);
     }
 }
