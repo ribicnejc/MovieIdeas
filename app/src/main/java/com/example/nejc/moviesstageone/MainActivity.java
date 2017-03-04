@@ -30,6 +30,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
+    //TODO maintain position when rotating
+    //TODO add ripple effect to reviews and trailers
+    //TODO intent choose between app or web
+    //TODO alert dialog should not close when rotate
+    //two strings and save it on instance and then recreate it if needed
+    //TODO clean dummy texts
     public static final String LIFECYCLE_CALLBACKS_LAYOUT_KEY = "layout_callback";
     public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
 

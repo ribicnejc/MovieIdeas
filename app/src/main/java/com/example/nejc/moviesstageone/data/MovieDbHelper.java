@@ -16,8 +16,6 @@ public class MovieDbHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        //TODO make sure you have all properties that you need
-        //for example, title, link to image, or even image itself
         final String SQL_CREATE_MOVIE_TABLE =
                 "CREATE TABLE " + MovieContract.MovieEntry.TABLE_NAME + " (" +
                 MovieContract.MovieEntry._ID                            + " INTEGER PRIMARY KEY AUTOINCREMENT, "    +

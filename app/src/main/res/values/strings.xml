@@ -16,4 +16,7 @@
     <string name="trailers">Trailers</string>
     <string name="no_trailers">No trailers</string>
     <string name="no_reviews">No reviews</string>
+    <string name="star_content_description">Star to mark movie as favorite</string>
+    <string name="movie_background_content_description">Movie background image</string>
+    <string name="youtube_logo">YouTube logo</string>
 </resources>

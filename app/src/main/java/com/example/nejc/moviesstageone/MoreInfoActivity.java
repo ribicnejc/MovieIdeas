@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nejc.moviesstageone.adapters.ReviewsAdapter;
+import com.example.nejc.moviesstageone.adapters.TrailersAdapter;
 import com.example.nejc.moviesstageone.data.MovieContract;
 import com.example.nejc.moviesstageone.networkutils.NetworkUtils;
 import com.example.nejc.moviesstageone.objects.Review;
+import com.example.nejc.moviesstageone.objects.Trailer;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -33,8 +36,10 @@ import java.util.List;
 
 import static android.view.View.GONE;
 
-public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapter.ReviewsAdapterOnClickHandler{
-    //TODO add content description to images
+public class MoreInfoActivity extends AppCompatActivity implements
+        ReviewsAdapter.ReviewsAdapterOnClickHandler,
+        TrailersAdapter.TrailersAdapterOnClickHandler{
+
     public TextView mTitleTextView;
     public TextView mAvgVoteTextView;
     public TextView mReleaseDateTextView;
@@ -51,6 +56,7 @@ public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapte
     public static final String TAG = MoreInfoActivity.class.getSimpleName();
 
     public ReviewsAdapter mReviewsAdapter;
+    public TrailersAdapter mTrailerAdapter;
     public String moviePosterPath;
     public int movieId;
     public String movieTitle;
@@ -59,7 +65,9 @@ public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapte
     public String movieBackgroundPath;
     public String movieReleaseDate;
     public ArrayList<Review> mReviews;
+    public ArrayList<Trailer> mTrailers;
     public GridLayoutManager layoutManager;
+    public LinearLayoutManager trailerLayoutManager;
 
     public static boolean mMarked = false;
 
@@ -76,6 +84,7 @@ public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapte
         mFavoriteImageView = (ImageView) findViewById(R.id.iv_favorite_star);
         mProgressBarReviews = (ProgressBar) findViewById(R.id.pb_reviews);
         mProgressBarTrailers = (ProgressBar) findViewById(R.id.pb_trailers);
+        mTrailerRecyclerView = (RecyclerView) findViewById(R.id.rv_trailers);
         mReviewRecyclerView = (RecyclerView) findViewById(R.id.rv_reviews);
         mReviewTextView = (TextView) findViewById(R.id.tv_reviews);
         mTrailerTextView = (TextView) findViewById(R.id.tv_trailers);
@@ -90,7 +99,16 @@ public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapte
         mReviewRecyclerView.setLayoutManager(layoutManager);
         mReviewRecyclerView.setHasFixedSize(true);
 
+
+        trailerLayoutManager = new LinearLayoutManager(this);
+
+        mTrailerRecyclerView.setLayoutManager(trailerLayoutManager);
+        mTrailerRecyclerView.setHasFixedSize(true);
+
+
+
         new FetchReviews().execute();
+        new FetchTrailer().execute();
 
     }
 
@@ -220,7 +238,73 @@ public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapte
     }
 
 
-    class FetchReviews extends AsyncTask<String, Void, ArrayList<Review>>{
+    private class FetchTrailer extends AsyncTask<String, Void, ArrayList<Trailer>>{
+
+        @Override
+        protected void onPreExecute() {
+            mProgressBarTrailers.setVisibility(View.VISIBLE);
+            mTrailerRecyclerView.setVisibility(View.GONE);
+            mTrailerTextView.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<Trailer> doInBackground(String... strings) {
+            String jsonResponse;
+            ArrayList<Trailer> trailerArrayList = new ArrayList<>();
+            URL mUrl = NetworkUtils.buildUrlByType(movieId+"", "videos", getBaseContext().getResources().getString(R.string.api_key));
+            try{
+                jsonResponse = NetworkUtils.getResponseFromHttpUrl(mUrl);
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                JSONArray jsonArray = jsonObject.getJSONArray("results");
+
+                for (int i = 0; i < jsonArray.length(); i++){
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                    String id = jsonObject1.getString("id");
+                    String key = jsonObject1.getString("key");
+                    String name = jsonObject1.getString("name");
+                    String site = jsonObject1.getString("site");
+                    String type = jsonObject1.getString("type");
+
+                    Trailer trailer = new Trailer();
+                    trailer.setId(id);
+                    trailer.setKey(key);
+                    trailer.setName(name);
+                    trailer.setSite(site);
+                    trailer.setType(type);
+
+                    trailerArrayList.add(trailer);
+                }
+
+            }catch (Exception e){
+                Log.v(TAG, "network failed to parse data in trailers");
+                e.printStackTrace();
+            }
+
+            return trailerArrayList;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Trailer> trailers) {
+
+            mProgressBarTrailers.setVisibility(GONE);
+
+            if (trailers == null ){
+                mTrailerTextView.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (trailers.size() == 0) mTrailerTextView.setVisibility(View.VISIBLE);
+            mTrailerRecyclerView.setVisibility(View.VISIBLE);
+            mTrailers= trailers;
+            mTrailerAdapter = new TrailersAdapter(trailers, MoreInfoActivity.this);
+            mTrailerRecyclerView.setAdapter(mTrailerAdapter);
+            super.onPostExecute(trailers);
+        }
+    }
+
+
+    private class FetchReviews extends AsyncTask<String, Void, ArrayList<Review>>{
 
         @Override
         protected void onPreExecute() {
@@ -280,6 +364,16 @@ public class MoreInfoActivity extends AppCompatActivity implements ReviewsAdapte
             super.onPostExecute(reviews);
         }
     }
+
+    @Override
+    public void trailersOnClick(int clickedItemIndex) {
+        String MAIN_YOUTUBE = "https://www.youtube.com/watch?v=";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MAIN_YOUTUBE + mTrailers.get(clickedItemIndex).getKey()));
+            if (intent.resolveActivity(getPackageManager()) != null){
+                startActivity(intent);
+            }
+    }
+
 
     @Override
     public void reviewsOnClick(final int clickedItemIndex) {

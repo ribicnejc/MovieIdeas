@@ -16,9 +16,6 @@ public class MovieContract {
                 .appendPath(PATH_MOVIE)
                 .build();
 
-        //TODO add column for saving image if possible
-        //for offline showing images in favorites movies
-
         public static final String TABLE_NAME = "movie";
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_POSTER_PATH = "poster_path";

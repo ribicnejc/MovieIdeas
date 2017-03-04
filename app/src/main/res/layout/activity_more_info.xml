@@ -4,9 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--TODO add two recyclerviews on for reviews and other for videos-->
-    <!--TODO make responsive layout for landscape and for devices sw600dp etc. tablets-->
-    <!--TODO save dimensions to dimens file-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,6 +19,7 @@
             android:layout_weight="15">
 
             <ImageView
+                android:contentDescription="@string/movie_background_content_description"
                 android:id="@+id/iv_movie_background_more_info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -43,6 +41,7 @@
                 tools:text="Secret life of pets" />
 
             <ImageView
+                android:contentDescription="@string/star_content_description"
                 android:id="@+id/iv_favorite_star"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -54,51 +53,37 @@
         </RelativeLayout>
 
         <TextView
+            style="@style/TextViewStyle"
             android:id="@+id/tv_overview_more_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:padding="10dp"
-            android:textColor="@color/colorBlackTextView"
-            android:textSize="15sp"
             tools:text="Overview\n\nNeki neki neki neki nkei neki neki neki neki ddf sds dss" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="10dp">
+            android:layout_weight="1">
 
             <TextView
+                style="@style/TextViewStyle"
                 android:id="@+id/tv_avg_vote_more_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:textColor="@color/colorBlackTextView"
-                android:textSize="15sp"
                 tools:text="Average rating: 6.5" />
 
             <TextView
+                style="@style/TextViewStyle"
                 android:id="@+id/tv_date_more_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/tv_avg_vote_more_info"
-                android:textColor="@color/colorBlackTextView"
-                android:textSize="15sp"
                 tools:text="Release date: 2015-06-09" />
 
 
         </RelativeLayout>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/trailers"
-            android:textColor="@color/colorBlackTextView" />
+            style="@style/TextViewStyle"
+            android:text="@string/trailers"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_trailers"
@@ -124,13 +109,9 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <!--TODO add styles for texts-->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/reviews"
-            android:textColor="@color/colorBlackTextView" />
+            style="@style/TextViewStyle"
+            android:text="@string/reviews" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_reviews"
