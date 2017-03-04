@@ -40,6 +40,9 @@ public class MoreInfoActivity extends AppCompatActivity implements
         ReviewsAdapter.ReviewsAdapterOnClickHandler,
         TrailersAdapter.TrailersAdapterOnClickHandler{
 
+
+    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
+
     public TextView mTitleTextView;
     public TextView mAvgVoteTextView;
     public TextView mReleaseDateTextView;
@@ -70,6 +73,7 @@ public class MoreInfoActivity extends AppCompatActivity implements
     public LinearLayoutManager trailerLayoutManager;
 
     public static boolean mMarked = false;
+    public static boolean mDialog = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -397,5 +401,11 @@ public class MoreInfoActivity extends AppCompatActivity implements
         if (intent.resolveActivity(getPackageManager()) != null){
             startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(LIFECYCLE_CALLBACKS_TEXT_KEY, mDialog);
+        super.onSaveInstanceState(outState);
     }
 }

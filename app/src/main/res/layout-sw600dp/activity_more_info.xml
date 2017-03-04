@@ -18,7 +18,7 @@
 
             <RelativeLayout
                 android:id="@+id/tmp"
-                android:layout_width="350dp"
+                android:layout_width="400dp"
                 android:layout_height="wrap_content">
 
                 <ImageView
@@ -41,7 +41,7 @@
                     android:padding="6dp"
                     android:textColor="@color/colorWhiteTextView"
                     android:textSize="20sp"
-                    tools:text="Secret life of pets" />
+                    tools:text="@string/dummy_text_title" />
 
                 <ImageView
                     android:contentDescription="@string/star_content_description"
@@ -63,7 +63,7 @@
                 <TextView
                     android:id="@+id/tv_overview_more_info"
                     style="@style/TextViewStyle"
-                    tools:text="Overview\n\nNeki neki neki neki nkei neki neki neki neki nejcddf sds dss" />
+                    tools:text="@string/dummy_text_description" />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -74,7 +74,7 @@
                         style="@style/TextViewStyle"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
-                        tools:text="Average rating: 6.5" />
+                        tools:text="@string/dummy_text_rating" />
 
                     <TextView
                         android:id="@+id/tv_date_more_info"
@@ -82,7 +82,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_below="@id/tv_avg_vote_more_info"
-                        tools:text="Release date: 2015-06-09" />
+                        tools:text="@string/dummy_text_date" />
 
 
                 </RelativeLayout>

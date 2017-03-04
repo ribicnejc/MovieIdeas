@@ -3,7 +3,6 @@ package com.example.nejc.moviesstageone;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,12 +29,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
-    //TODO maintain position when rotating
-    //TODO add ripple effect to reviews and trailers
-    //TODO intent choose between app or web
-    //TODO alert dialog should not close when rotate
-    //two strings and save it on instance and then recreate it if needed
-    //TODO clean dummy texts
     public static final String LIFECYCLE_CALLBACKS_LAYOUT_KEY = "layout_callback";
     public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callback";
 
@@ -83,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             layoutManager = new GridLayoutManager(this, 4);
         }else
             layoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(layoutManager);
 
+        mRecyclerView.setLayoutManager(layoutManager);
 
 
         assert sSettingsOption != null;
@@ -114,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     }
 
-    class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
+    private class FetchMovies extends AsyncTask<String, Void, ArrayList<Movie>> {
         String type;
 
         FetchMovies(String type) {
@@ -196,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
 
-    class FetchFavoriteMovies extends AsyncTask<Cursor, Cursor, Cursor>{
+    private class FetchFavoriteMovies extends AsyncTask<Cursor, Cursor, Cursor>{
         @Override
         protected void onPreExecute() {
             mProgressBar.setVisibility(View.VISIBLE);

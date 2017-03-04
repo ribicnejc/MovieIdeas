@@ -19,4 +19,15 @@
     <string name="star_content_description">Star to mark movie as favorite</string>
     <string name="movie_background_content_description">Movie background image</string>
     <string name="youtube_logo">YouTube logo</string>
+
+
+
+
+    <string name="dummy_text_description">Overview\n\nSomething that describe that image up. Well i don\'t know what to say, just testing if description is aligning correctly</string>
+    <string name="dummy_text_rating">Average rating: 6.5</string>
+    <string name="dummy_text_date">Release date: 2015_06_09</string>
+    <string name="dummy_text_title">Secret life of pets</string>
+
+    <string name="dummy_text_review">James Bond</string>
+    <string name="dummy_text_youtube">YouTube official video (Trailer) 2016</string>
 </resources>
