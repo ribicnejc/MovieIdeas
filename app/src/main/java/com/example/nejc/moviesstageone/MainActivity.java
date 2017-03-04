@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     MoviesAdapter mAdapter;
     ProgressBar mProgressBar;
     TextView mErrorMsg;
+    TextView mEmptyFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_rv);
         mErrorMsg = (TextView) findViewById(R.id.tv_error);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        mEmptyFavorite = (TextView) findViewById(R.id.favorites_error);
 
         if (savedInstanceState != null){
             if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TEXT_KEY)){
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         @Override
         protected void onPreExecute() {
+            mEmptyFavorite.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.INVISIBLE);
             mErrorMsg.setVisibility(View.INVISIBLE);
@@ -200,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private class FetchFavoriteMovies extends AsyncTask<Cursor, Cursor, Cursor>{
         @Override
         protected void onPreExecute() {
+            mEmptyFavorite.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.INVISIBLE);
             mErrorMsg.setVisibility(View.INVISIBLE);
@@ -255,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
                     movies.add(movie);
                 }while (cursor.moveToNext());
+            }
+            if (movies.size() == 0){
+
+                mEmptyFavorite.setVisibility(View.VISIBLE);
             }
             mAdapter = new MoviesAdapter(movies, MainActivity.this);
             mRecyclerView.setAdapter(mAdapter);
